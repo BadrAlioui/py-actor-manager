@@ -2,24 +2,21 @@ import sqlite3
 
 from app.models import Actor
 
-# add manager here
-
 
 class ActorManager:
-    def __init__(self, db_name, table_name):
+    def __init__(self, db_name: str, table_name: str) -> None:
         self.connection = sqlite3.connect(db_name)
         self.cursor = self.connection.cursor()
-        self.db = db_name
         self.table = table_name
 
-    def create(self, first_name, last_name):
+    def create(self, first_name: str, last_name: str) -> None:
         self.cursor.execute(
-            "INSERT INTO actors (first_name, last_name) VALUES (?,?)",
+            "INSERT INTO actors (first_name, last_name) VALUES (?, ?)",
             (first_name, last_name),
         )
         self.connection.commit()
 
-    def all(self):
+    def all(self) -> list[Actor]:
         self.cursor.execute("SELECT * FROM actors")
         rows = self.cursor.fetchall()
         actors = []
@@ -27,13 +24,18 @@ class ActorManager:
             actors.append(Actor(row[0], row[1], row[2]))
         return actors
 
-    def update(self, pk, new_first_name, new_last_name):
+    def update(
+        self, pk: int, new_first_name: str, new_last_name: str
+    ) -> None:
         self.cursor.execute(
-            "UPDATE actors SET first_name = ?, last_name = ? WHERE id=?",
+            "UPDATE actors SET first_name = ?, last_name = ? WHERE id = ?",
             (new_first_name, new_last_name, pk),
         )
         self.connection.commit()
 
-    def delete(self, pk):
-        self.cursor.execute("DELETE FROM actors WHERE id=?", (pk,))
+    def delete(self, pk: int) -> None:
+        self.cursor.execute(
+            "DELETE FROM actors WHERE id = ?",
+            (pk,),
+        )
         self.connection.commit()
